@@ -1,0 +1,75 @@
+---
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'fr' } = Astro.props;
+const t = content[lang].methode;
+---
+
+<section id="methode">
+  <div class="container flow">
+    <div class="section-head">
+      <span class="node" data-node aria-hidden="true"></span>
+      <h2>{t.heading}</h2>
+    </div>
+
+    <ol class="steps">
+      {
+        t.steps.map((e, i) => (
+          <li class="step">
+            <span class="step-num" aria-hidden="true">
+              {i + 1}
+            </span>
+            <div>
+              <h3>{e.titre}</h3>
+              <p>{e.detail}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 3vw, 32px);
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1rem;
+  }
+
+  .step-num {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    border: 2px solid var(--turquoise);
+    color: var(--plum);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .step h3 {
+    margin: 0.25rem 0 0.2rem;
+    font-size: 1.12rem;
+  }
+
+  .step p {
+    margin: 0;
+    color: var(--text-muted);
+  }
+</style>

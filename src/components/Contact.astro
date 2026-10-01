@@ -1,0 +1,93 @@
+---
+import { contact, links } from '../config';
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'fr' } = Astro.props;
+const t = content[lang].contact;
+---
+
+<section id="contact">
+  <div class="container flow">
+    <div class="section-head">
+      <span class="node" data-node aria-hidden="true"></span>
+      <h2>{t.heading}</h2>
+    </div>
+    <p class="section-intro">{t.intro}</p>
+
+    <div class="contact-actions">
+      <!-- Dernier nœud du fil : le visiteur est « connecté » -->
+      <span class="node contact-end" data-node aria-hidden="true"></span>
+
+      <a class="btn btn-primary" href={links.mailto}>{t.email}</a>
+      <a
+        class="btn btn-secondary"
+        href={links.whatsapp}
+        target="_blank"
+        rel="noopener"
+      >
+        {t.whatsapp}
+      </a>
+      {
+        links.malt && (
+          <a
+            class="btn btn-secondary"
+            href={links.malt}
+            target="_blank"
+            rel="noopener"
+          >
+            {t.malt}
+          </a>
+        )
+      }
+      {
+        links.linkedin && (
+          <a
+            class="btn btn-secondary"
+            href={links.linkedin}
+            target="_blank"
+            rel="noopener"
+          >
+            {t.linkedin}
+          </a>
+        )
+      }
+    </div>
+
+    <p class="contact-email">
+      {t.direct} <a href={links.mailto}>{contact.email}</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .contact-actions {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .contact-end {
+    position: absolute;
+    top: 50%;
+    left: calc(-1 * var(--gutter) / 2);
+    transform: translate(-50%, -50%);
+  }
+
+  @media (max-width: 899px) {
+    .contact-end {
+      left: calc(-1 * var(--gutter-mobile) / 2);
+      top: 1.25rem;
+    }
+  }
+
+  .contact-email {
+    color: var(--text-muted);
+    font-size: 0.98rem;
+    margin: 0;
+  }
+</style>

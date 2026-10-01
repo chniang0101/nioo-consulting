@@ -1,0 +1,151 @@
+---
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'fr' } = Astro.props;
+const t = content[lang].hero;
+---
+
+<section class="hero" id="top">
+  <div class="container flow hero-grid">
+    <!-- Le N : premier nœud du fil (son extrémité bas-droite) -->
+    <figure class="hero-mark">
+      <img
+        src="/brand/nioo-icon-plum-transparent.svg"
+        alt={t.markAlt}
+        width="220"
+        height="220"
+      />
+      <span class="node hero-start" data-node aria-hidden="true"></span>
+    </figure>
+
+    <div class="hero-text">
+      <h1>{t.title}</h1>
+      <p class="lead">{t.lead}</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#contact">{t.ctaPrimary}</a>
+        <a class="btn btn-secondary" href="#realisations">{t.ctaSecondary}</a>
+      </div>
+
+      <ul class="hero-connections" aria-label={t.connectionsLabel}>
+        {
+          t.connections.map((c) => (
+            <li>
+              <span class="node" data-node aria-hidden="true" />
+              {c}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <p class="container flow trust">{t.trust}</p>
+</section>
+
+<style>
+  .hero {
+    padding-top: clamp(40px, 6vw, 72px);
+    padding-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(24px, 5vw, 56px);
+    align-items: center;
+  }
+
+  .hero-text {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .hero-mark {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    margin: 0;
+    justify-self: center;
+  }
+
+  .hero-mark img {
+    height: clamp(150px, 20vw, 220px);
+    width: auto;
+    display: block;
+  }
+
+  /* Nœud de départ du fil : extrémité bas-droite du N (70% / 78%) */
+  .hero-start {
+    position: absolute;
+    left: 70%;
+    top: 78%;
+    transform: translate(-50%, -50%);
+  }
+
+  h1 {
+    margin-bottom: 0.4em;
+  }
+
+  .lead {
+    font-size: clamp(1.05rem, 1.6vw, 1.22rem);
+    color: var(--text);
+    max-width: 44ch;
+    margin-bottom: 1.6rem;
+  }
+
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-connections {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    color: var(--text-muted);
+    font-size: 0.98rem;
+  }
+
+  .hero-connections li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .trust {
+    margin-top: clamp(24px, 4vw, 40px);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+  }
+
+  @media (max-width: 760px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-mark {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+    }
+
+    .hero-text {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .hero-mark img {
+      height: 120px;
+    }
+  }
+</style>

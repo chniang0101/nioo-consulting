@@ -1,0 +1,89 @@
+---
+import '../styles/global.css';
+import { site } from '../config';
+import { content, routes, type Lang, type PageKey } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+  page?: PageKey;
+  title?: string;
+  description?: string;
+}
+
+const { lang = 'fr', page = 'home', title, description } = Astro.props;
+const t = content[lang];
+
+const resolvedTitle =
+  title ?? (page === 'legal' ? t.meta.legalTitle : t.meta.homeTitle);
+const resolvedDescription =
+  description ??
+  (page === 'legal' ? t.meta.legalDescription : t.meta.homeDescription);
+
+const canonical = new URL(routes[page][lang], site.url).href;
+const ogImage = new URL(
+  '/brand/png/nioo-logo-horizontal-light-1200.png',
+  site.url
+).href;
+
+// Liens hreflang pour chaque langue de la même page + x-default (fr).
+const alternates = (['fr', 'en'] as Lang[]).map((l) => ({
+  lang: l,
+  href: new URL(routes[page][l], site.url).href,
+}));
+---
+
+<!doctype html>
+<html lang={t.htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{resolvedTitle}</title>
+    <meta name="description" content={resolvedDescription} />
+    <link rel="canonical" href={canonical} />
+
+    {
+      alternates.map((a) => (
+        <link rel="alternate" hreflang={a.lang} href={a.href} />
+      ))
+    }
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(routes[page].fr, site.url).href}
+    />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/png/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/png/favicon-180.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={resolvedTitle} />
+    <meta property="og:description" content={resolvedDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={t.ogLocale} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={resolvedTitle} />
+    <meta name="twitter:description" content={resolvedDescription} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="theme-color" content="#4A2E48" />
+
+    <!-- Manrope — chargement performant -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.skip}</a>
+    <slot />
+  </body>
+</html>

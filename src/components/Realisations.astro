@@ -1,0 +1,149 @@
+---
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'fr' } = Astro.props;
+const t = content[lang].realisations;
+---
+
+<section id="realisations">
+  <div class="container flow">
+    <div class="section-head">
+      <span class="node" data-node aria-hidden="true"></span>
+      <h2>{t.heading}</h2>
+    </div>
+    <p class="section-intro">{t.intro}</p>
+
+    <ol class="missions">
+      {
+        t.missions.map((m) => (
+          <li class="mission">
+            <span class="branch-node" aria-hidden="true" />
+            <div class="mission-body">
+              <h3>{m.title}</h3>
+              <dl>
+                <dt>{t.labels.problem}</dt>
+                <dd>{m.probleme}</dd>
+                <dt>{t.labels.action}</dt>
+                <dd>{m.intervention}</dd>
+                <dt>{t.labels.result}</dt>
+                <dd>{m.resultat}</dd>
+              </dl>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .missions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(28px, 4vw, 44px);
+  }
+
+  .mission {
+    position: relative;
+    padding-left: 1.75rem;
+  }
+
+  /* Dérivation : un petit nœud relié au fil principal par une courte branche */
+  .branch-node {
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--off-white);
+    border: 2px solid var(--turquoise);
+    transition: background-color 0.3s ease;
+  }
+
+  .branch-node::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: 0.9rem;
+    height: 2px;
+    background: var(--turquoise-soft);
+    transform: translateY(-50%);
+  }
+
+  .mission.is-visible .branch-node {
+    background: var(--turquoise);
+  }
+
+  .mission h3 {
+    margin-bottom: 0.75rem;
+  }
+
+  .mission dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.35rem 1.25rem;
+  }
+
+  .mission dt {
+    font-weight: 600;
+    color: var(--turquoise);
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+    padding-top: 0.1rem;
+  }
+
+  .mission dd {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 600px) {
+    .mission dl {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+
+    .mission dt {
+      margin-top: 0.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .branch-node {
+      background: var(--turquoise);
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const missions = document.querySelectorAll('.mission');
+  if (
+    missions.length &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    missions.forEach((m) => io.observe(m));
+  } else {
+    missions.forEach((m) => m.classList.add('is-visible'));
+  }
+</script>

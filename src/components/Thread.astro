@@ -1,0 +1,163 @@
+---
+// Fil conducteur : un seul SVG derrière le contenu, dont le tracé est
+// calculé en JS à partir des positions réelles des éléments [data-node].
+// La ligne se dessine au scroll et allume chaque nœud atteint.
+---
+
+<svg class="thread-svg" aria-hidden="true" focusable="false">
+  <path class="thread-line" d="" />
+</svg>
+
+<script>
+  type Pt = { x: number; y: number };
+
+  const wrap = document.querySelector<HTMLElement>('.thread-wrap');
+  const svg = wrap?.querySelector<SVGSVGElement>('.thread-svg');
+  const path = svg?.querySelector<SVGPathElement>('.thread-line');
+
+  if (wrap && svg && path) {
+    wrap.classList.add('js-thread');
+
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    let nodes: HTMLElement[] = [];
+    let points: Pt[] = [];
+    let nodeLengths: number[] = []; // longueur du tracé jusqu'à chaque nœud
+    let totalLength = 0;
+    let ticking = false;
+
+    const centerOf = (el: HTMLElement, origin: DOMRect): Pt => {
+      const r = el.getBoundingClientRect();
+      return {
+        x: r.left - origin.left + r.width / 2,
+        y: r.top - origin.top + r.height / 2,
+      };
+    };
+
+    // Construit un tracé fluide : courbes de Bézier douces sur desktop,
+    // segments droits sur mobile (< 900 px).
+    const buildPath = (pts: Pt[], smooth: boolean): string => {
+      if (pts.length === 0) return '';
+      let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+      if (!smooth || pts.length < 2) {
+        for (let i = 1; i < pts.length; i++) {
+          d += ` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`;
+        }
+        return d;
+      }
+      for (let i = 1; i < pts.length; i++) {
+        const p0 = pts[i - 1];
+        const p1 = pts[i];
+        // Points de contrôle verticaux : la courbe « plonge » entre deux nœuds
+        const cy = (p0.y + p1.y) / 2;
+        const c1 = { x: p0.x, y: cy };
+        const c2 = { x: p1.x, y: cy };
+        d += ` C ${c1.x.toFixed(1)} ${c1.y.toFixed(1)}, ${c2.x.toFixed(
+          1
+        )} ${c2.y.toFixed(1)}, ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
+      }
+      return d;
+    };
+
+    const measure = () => {
+      nodes = Array.from(wrap.querySelectorAll<HTMLElement>('[data-node]'));
+      const origin = wrap.getBoundingClientRect();
+      points = nodes.map((n) => centerOf(n, origin));
+
+      const smooth = window.innerWidth >= 900;
+      path.setAttribute('d', buildPath(points, smooth));
+
+      // Dimensions du SVG en pixels (1 unité = 1 px, pas de déformation)
+      const w = wrap.offsetWidth;
+      const h = wrap.offsetHeight;
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      svg.setAttribute('width', String(w));
+      svg.setAttribute('height', String(h));
+
+      totalLength = path.getTotalLength();
+
+      // Longueur du tracé jusqu'au point le plus proche de chaque nœud
+      nodeLengths = points.map((pt) => nearestLength(pt));
+
+      path.style.strokeDasharray = String(totalLength);
+
+      if (reduceMotion) {
+        // Tout dessiné, tous les nœuds allumés, aucun mouvement
+        path.style.strokeDashoffset = '0';
+        nodes.forEach((n) => n.classList.add('is-reached'));
+      } else {
+        path.style.strokeDashoffset = String(totalLength);
+        update();
+      }
+    };
+
+    // Recherche par échantillonnage de la longueur de tracé la plus proche d'un point
+    const nearestLength = (pt: Pt): number => {
+      const steps = 240;
+      let best = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i <= steps; i++) {
+        const l = (totalLength * i) / steps;
+        const p = path.getPointAtLength(l);
+        const dx = p.x - pt.x;
+        const dy = p.y - pt.y;
+        const dist = dx * dx + dy * dy;
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = l;
+        }
+      }
+      return best;
+    };
+
+    const update = () => {
+      ticking = false;
+      if (reduceMotion || totalLength === 0) return;
+
+      const origin = wrap.getBoundingClientRect();
+      // Tête de ligne à ~60 % de la hauteur de l'écran
+      const head = window.innerHeight * 0.6;
+      // Position de la tête dans le repère du wrap
+      const headY = head - origin.top;
+
+      // Fraction dessinée selon la position verticale de la tête
+      const wrapH = wrap.offsetHeight;
+      let frac = headY / wrapH;
+      frac = Math.max(0, Math.min(1, frac));
+
+      const drawn = frac * totalLength;
+      path.style.strokeDashoffset = String(totalLength - drawn);
+
+      // Allumage des nœuds atteints
+      nodes.forEach((n, i) => {
+        n.classList.toggle('is-reached', nodeLengths[i] <= drawn + 6);
+      });
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    // Debounce du recalcul au redimensionnement
+    let resizeTimer: number;
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(measure, 150);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+
+    // Recalcul initial, puis après chargement des polices (métriques stables)
+    measure();
+    if ('fonts' in document) {
+      (document as any).fonts.ready.then(measure);
+    }
+    window.addEventListener('load', measure);
+  }
+</script>

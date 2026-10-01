@@ -1,0 +1,101 @@
+---
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'fr' } = Astro.props;
+const t = content[lang].services;
+---
+
+<section id="services">
+  <div class="container flow">
+    <div class="section-head">
+      <span class="node" data-node aria-hidden="true"></span>
+      <h2>{t.heading}</h2>
+    </div>
+
+    <div class="odoo-block">
+      <h3>{t.odooTitle}</h3>
+      <dl class="service-list">
+        {
+          t.odoo.map((s) => (
+            <div class="service-item">
+              <dt>{s.title}</dt>
+              <dd>{s.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <div class="complementaires">
+      <h3>{t.extraTitle}</h3>
+      <dl class="service-list small">
+        {
+          t.extra.map((s) => (
+            <div class="service-item">
+              <dt>{s.title}</dt>
+              <dd>{s.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .odoo-block {
+    margin-bottom: clamp(36px, 5vw, 56px);
+  }
+
+  .odoo-block h3,
+  .complementaires h3 {
+    color: var(--plum);
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .service-list {
+    margin: 0;
+    display: grid;
+    gap: 1.5rem 2.5rem;
+  }
+
+  @media (min-width: 720px) {
+    .service-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .service-item {
+    border-left: 2px solid var(--turquoise-soft);
+    padding-left: 1rem;
+  }
+
+  .service-item dt {
+    font-weight: 600;
+    color: var(--plum);
+    font-size: 1.12rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .odoo-block .service-item dt {
+    font-size: 1.2rem;
+  }
+
+  .service-item dd {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .complementaires {
+    padding-top: clamp(24px, 3vw, 36px);
+    border-top: 1px solid var(--border);
+  }
+
+  .service-list.small .service-item dt {
+    font-size: 1.05rem;
+  }
+</style>

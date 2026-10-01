@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { contact } from '../config';
+import { content, routes, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang].legal;
+const homeUrl = routes.home[lang];
+---
+
+<Layout lang={lang} page="legal">
+  <Header lang={lang} page="legal" />
+  <main id="main" class="legal">
+    <div class="container">
+      <h1>{t.heading}</h1>
+
+      <h2>{t.editorTitle}</h2>
+      <p>
+        <Fragment set:html={t.editorBody} /><br />
+        {t.editorContact}
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </p>
+      <!-- À COMPLÉTER : statut juridique (auto-entrepreneur, société, etc.) -->
+      <p class="todo">{t.statusTodo}</p>
+
+      <h2>{t.hostTitle}</h2>
+      <p>
+        <Fragment set:html={t.hostBody} /><br />
+        <a href="https://www.cloudflare.com" target="_blank" rel="noopener"
+          >www.cloudflare.com</a
+        >
+      </p>
+
+      <h2>{t.ipTitle}</h2>
+      <p>{t.ipBody}</p>
+      <p>{t.ipTrademark}</p>
+
+      <h2>{t.dataTitle}</h2>
+      <p>{t.dataBody}</p>
+
+      <p class="back"><a href={homeUrl}>{t.back}</a></p>
+    </div>
+  </main>
+  <Footer lang={lang} page="legal" />
+</Layout>
+
+<style>
+  .legal {
+    padding-block: clamp(48px, 7vw, 88px);
+  }
+
+  .legal h1 {
+    margin-bottom: 1.5rem;
+  }
+
+  .legal h2 {
+    font-size: 1.25rem;
+    margin-top: 2.25rem;
+  }
+
+  .legal .todo {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .legal .back {
+    margin-top: 3rem;
+  }
+</style>

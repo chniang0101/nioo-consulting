@@ -1,0 +1,73 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'fr' } = Astro.props;
+const t = content[lang].about;
+
+// La photo n'est affichée que si elle est fournie (public/photo-cheikh.webp).
+const photoPath = path.resolve('./public/photo-cheikh.webp');
+const hasPhoto = fs.existsSync(photoPath);
+---
+
+<section id="a-propos">
+  <div class="container flow">
+    <div class="section-head">
+      <span class="node" data-node aria-hidden="true"></span>
+      <h2>{t.heading}</h2>
+    </div>
+
+    <div class:list={['about-grid', { 'has-photo': hasPhoto }]}>
+      <div class="about-text">
+        {t.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+
+      {
+        hasPhoto && (
+          <figure class="about-photo">
+            <img
+              src="/photo-cheikh.webp"
+              alt={t.photoAlt}
+              width="320"
+              height="400"
+              loading="lazy"
+            />
+          </figure>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-grid.has-photo {
+    display: grid;
+    grid-template-columns: 1fr minmax(220px, 300px);
+    gap: clamp(28px, 5vw, 56px);
+    align-items: start;
+  }
+
+  .about-text {
+    max-width: 62ch;
+  }
+
+  .about-photo {
+    margin: 0;
+  }
+
+  .about-photo img {
+    width: 100%;
+    border-radius: var(--radius);
+    display: block;
+  }
+
+  @media (max-width: 720px) {
+    .about-grid.has-photo {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

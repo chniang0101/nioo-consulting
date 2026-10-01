@@ -1,0 +1,17 @@
+{
+  "name": "nioo-consulting-site",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Site vitrine Nioo Consulting — niooconsulting.com",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.2.1",
+    "astro": "^4.16.18"
+  }
+}
