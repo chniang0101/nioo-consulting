@@ -26,6 +26,11 @@ export const contact = {
   linkedin: 'https://www.linkedin.com/in/cheikh-niang-870809197/',
 };
 
+// Photo de la section « Qui suis-je / About me ».
+// Déposez l'image dans public/photo-cheikh.webp PUIS passez cette valeur à true.
+// Tant qu'elle est à false, aucune photo ni avatar générique n'est affiché.
+export const hasPhoto = false;
+
 // Liens dérivés (ne pas modifier directement, ils se construisent tout seuls).
 export const links = {
   mailto: `mailto:${contact.email}`,

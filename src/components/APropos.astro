@@ -1,17 +1,15 @@
 ---
-import fs from 'node:fs';
-import path from 'node:path';
 import { content, type Lang } from '../i18n';
+import { hasPhoto } from '../config';
 
 interface Props {
   lang?: Lang;
 }
 const { lang = 'fr' } = Astro.props;
 const t = content[lang].about;
-
-// La photo n'est affichée que si elle est fournie (public/photo-cheikh.webp).
-const photoPath = path.resolve('./public/photo-cheikh.webp');
-const hasPhoto = fs.existsSync(photoPath);
+// La photo n'est affichée que si `hasPhoto` est à true dans src/config.ts
+// (voir ce fichier). Approche compatible avec tous les modes de build,
+// y compris l'adaptateur Cloudflare (pas d'accès au système de fichiers).
 ---
 
 <section id="a-propos">
