@@ -40,13 +40,29 @@ const t = content[lang].methode;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: clamp(20px, 3vw, 32px);
+    gap: clamp(18px, 2.5vw, 28px);
+    position: relative;
+  }
+
+  /* Fine ligne verticale reliant les cercles numérotés */
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 1.2rem;
+    top: 1.2rem;
+    bottom: 1.2rem;
+    width: 2px;
+    background: var(--turquoise);
+    transform: translateX(-1px);
+    z-index: 0;
   }
 
   .step {
     display: flex;
     align-items: flex-start;
     gap: 1.1rem;
+    position: relative;
+    z-index: 1;
   }
 
   .step-num {
@@ -58,6 +74,7 @@ const t = content[lang].methode;
     height: 2.4rem;
     border-radius: 50%;
     border: 2px solid var(--turquoise);
+    background: var(--off-white);
     color: var(--plum);
     font-weight: 600;
     font-size: 1.05rem;

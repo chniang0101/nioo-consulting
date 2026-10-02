@@ -10,8 +10,6 @@ const { lang = 'fr', page = 'home' } = Astro.props;
 const t = content[lang];
 
 const homeUrl = routes.home[lang];
-const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
-const switchUrl = routes[page][otherLang];
 ---
 
 <header class="site-header">
@@ -42,11 +40,6 @@ const switchUrl = routes[page][otherLang];
             </li>
           ))
         }
-        <li class="nav-sep">
-          <a href={switchUrl} class="lang-switch" hreflang={otherLang} title={t.langSwitch.to}>
-            {t.langSwitch.label}
-          </a>
-        </li>
         <li>
           <a href="#contact" class="btn btn-primary nav-cta">{t.nav.cta}</a>
         </li>
@@ -78,7 +71,7 @@ const switchUrl = routes[page][otherLang];
   }
 
   .logo img {
-    height: 34px;
+    height: 41px;
     width: auto;
   }
 

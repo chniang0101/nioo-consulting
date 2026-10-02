@@ -46,15 +46,24 @@ const t = content[lang].services;
 </section>
 
 <style>
+  /* Bloc Odoo dominant : fond légèrement teinté, coins arrondis */
   .odoo-block {
-    margin-bottom: clamp(36px, 5vw, 56px);
+    margin-bottom: clamp(24px, 3vw, 36px);
+    background: #f3ecf2;
+    border-radius: 12px;
+    padding: clamp(24px, 3.5vw, 40px);
   }
 
-  .odoo-block h3,
+  .odoo-block h3 {
+    color: var(--plum);
+    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+    margin-bottom: 1.5rem;
+  }
+
   .complementaires h3 {
     color: var(--plum);
-    font-size: 1.1rem;
-    margin-bottom: 1.25rem;
+    font-size: 1.05rem;
+    margin-bottom: 1.1rem;
   }
 
   .service-list {

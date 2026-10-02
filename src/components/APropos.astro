@@ -1,15 +1,11 @@
 ---
 import { content, type Lang } from '../i18n';
-import { hasPhoto } from '../config';
 
 interface Props {
   lang?: Lang;
 }
 const { lang = 'fr' } = Astro.props;
 const t = content[lang].about;
-// La photo n'est affichée que si `hasPhoto` est à true dans src/config.ts
-// (voir ce fichier). Approche compatible avec tous les modes de build,
-// y compris l'adaptateur Cloudflare (pas d'accès au système de fichiers).
 ---
 
 <section id="a-propos">
@@ -19,53 +15,146 @@ const t = content[lang].about;
       <h2>{t.heading}</h2>
     </div>
 
-    <div class:list={['about-grid', { 'has-photo': hasPhoto }]}>
+    <div class="about-grid">
       <div class="about-text">
         {t.paragraphs.map((p) => <p>{p}</p>)}
       </div>
 
-      {
-        hasPhoto && (
-          <figure class="about-photo">
-            <img
-              src="/photo-cheikh.webp"
-              alt={t.photoAlt}
-              width="320"
-              height="400"
-              loading="lazy"
-            />
-          </figure>
-        )
-      }
+      <!-- Schéma dans l'esprit du fil : trois villes reliées par des traits
+           courbes turquoise. Casablanca (où je suis) est pleine, Dakar et
+           Paris sont des cercles vides. Les traits se dessinent à l'arrivée. -->
+      <figure class="geo" aria-hidden="true">
+        <svg class="geo-svg" viewBox="0 0 300 260" role="img">
+          <path class="geo-link" d="M60 212 Q92 170 150 138" />
+          <path class="geo-link" d="M150 138 Q214 108 232 46" />
+
+          <circle class="geo-node" cx="60" cy="212" r="7" />
+          <circle class="geo-node is-here" cx="150" cy="138" r="7" />
+          <circle class="geo-node" cx="232" cy="46" r="7" />
+
+          <text class="geo-label" x="60" y="236" text-anchor="middle">Dakar</text>
+          <text class="geo-label" x="166" y="142" text-anchor="start">Casablanca</text>
+          <text class="geo-label" x="222" y="38" text-anchor="end">Paris</text>
+        </svg>
+      </figure>
     </div>
   </div>
 </section>
 
 <style>
-  .about-grid.has-photo {
+  .about-grid {
     display: grid;
-    grid-template-columns: 1fr minmax(220px, 300px);
+    grid-template-columns: 1fr minmax(240px, 340px);
     gap: clamp(28px, 5vw, 56px);
-    align-items: start;
+    align-items: center;
   }
 
   .about-text {
-    max-width: 62ch;
+    max-width: 60ch;
   }
 
-  .about-photo {
+  .about-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .geo {
     margin: 0;
-  }
-
-  .about-photo img {
+    justify-self: center;
     width: 100%;
-    border-radius: var(--radius);
-    display: block;
+    max-width: 340px;
   }
 
-  @media (max-width: 720px) {
-    .about-grid.has-photo {
+  .geo-svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .geo-link {
+    fill: none;
+    stroke: var(--turquoise);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  .geo-node {
+    fill: var(--off-white);
+    stroke: var(--turquoise);
+    stroke-width: 3;
+  }
+
+  .geo-node.is-here {
+    fill: var(--turquoise);
+  }
+
+  .geo-label {
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    fill: var(--plum);
+    dominant-baseline: middle;
+  }
+
+  /* Tracé animé : lignes masquées puis dessinées quand la section est vue */
+  .geo-link {
+    stroke-dasharray: var(--len, 200);
+    stroke-dashoffset: var(--len, 200);
+  }
+
+  .geo.in-view .geo-link {
+    transition: stroke-dashoffset 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+    stroke-dashoffset: 0;
+  }
+
+  .geo.in-view .geo-link:nth-of-type(2) {
+    transition-delay: 0.25s;
+  }
+
+  @media (max-width: 760px) {
+    .about-grid {
       grid-template-columns: 1fr;
+    }
+
+    .geo {
+      order: 2;
+      max-width: 240px;
+      justify-self: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .geo-link {
+      stroke-dashoffset: 0;
     }
   }
 </style>
+
+<script>
+  // Mesure la longueur réelle de chaque trait pour un dessin propre,
+  // puis déclenche l'animation quand le schéma entre dans la vue.
+  const geo = document.querySelector<HTMLElement>('.geo');
+  if (geo) {
+    geo.querySelectorAll<SVGPathElement>('.geo-link').forEach((p) => {
+      const len = p.getTotalLength();
+      p.style.setProperty('--len', String(len));
+    });
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      geo.classList.add('in-view');
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              geo.classList.add('in-view');
+              io.disconnect();
+            }
+          });
+        },
+        { threshold: 0.4 }
+      );
+      io.observe(geo);
+    }
+  }
+</script>
