@@ -131,6 +131,27 @@ Présenter Odoo comme l'activité principale (bloc plus grand), puis les autres 
 
 > Ne PAS afficher Microsoft Dynamics pour l'instant (formation en cours). Prévoir un emplacement facile à ajouter dans la liste des services complémentaires.
 
+### 4.2 bis Modules et localisations (`#modules`)
+
+Section placée entre Services et Réalisations, avec son nœud sur le fil et
+l'entrée « Modules » dans le menu.
+
+**Titre :** Modules et localisations
+
+**Partie A — Modules.** Sous-titre « Les modules Odoo que je mets en place au
+quotidien ». Grille compacte (5 colonnes desktop, 2 sur mobile) : chaque module
+= icône Lucide en SVG inline (trait 1.5, prune `#4A2E48`, turquoise au survol)
++ nom. Modules : Ventes, Achats, Inventaire, Comptabilité, Point de vente,
+Fabrication, RH et présences, Site web et e-commerce, Flotte, Événements.
+Ne pas utiliser les icônes ni le logo officiels d'Odoo.
+
+**Partie B — Localisations.** Sous-titre « Une comptabilité conforme, quel que
+soit le pays ». Trois blocs (empilés sur mobile), chacun relié au fil par une
+branche à nœud : France (plan comptable général, TVA, FEC, facturation
+électronique), Maroc (plan comptable marocain, TVA, déclarations), Zone OHADA
+(SYSCOHADA, Sénégal / Afrique de l'Ouest). Phrase de clôture sur le
+multi-sociétés et multi-devises (EUR, MAD, XOF).
+
 ### 4.3 Réalisations (`#realisations`)
 
 **Titre :** Quelques missions récentes
@@ -180,7 +201,15 @@ Aujourd'hui, je mets en place et je fais évoluer Odoo pour des entreprises de s
 
 Je travaille en français et en anglais, à distance ou sur site au Maroc.
 
-Emplacement pour une photo (`public/photo-cheikh.webp`, à fournir). Si absente, ne rien afficher (pas d'avatar générique).
+**Mise en page : deux colonnes sur desktop.** Texte à gauche. À droite, un
+schéma SVG dans l'esprit du fil conducteur : trois nœuds reliés par des traits
+courbes turquoise, étiquetés « Dakar » (bas-gauche), « Casablanca » (centre) et
+« Paris » (haut-droite), disposés selon leur position géographique approximative.
+Pas de fond de carte ni de frontières. Casablanca est un nœud plein (où je suis),
+Dakar et Paris sont des cercles vides à contour turquoise. Les traits se
+dessinent quand la section entre en vue. Sur mobile, le schéma passe sous le
+texte, en plus petit. Pas de photo pour l'instant (le drapeau `hasPhoto` reste
+à `false` dans `src/config.ts`).
 
 ### 4.6 Contact (`#contact`)
 
@@ -218,3 +247,33 @@ Nom de l'éditeur (Cheikh Niang), contact, hébergeur (Cloudflare, Inc.), mentio
 2. Page d'accueil complète + mentions légales.
 3. README avec : lancer en local, déployer sur Cloudflare, modifier les liens de contact.
 4. Vérification finale : affichage mobile, Lighthouse, liens d'ancre, favicon, aperçu Open Graph.
+
+---
+
+## 7. Animations (sans librairie)
+
+Règles communes : durées 300–700 ms, easing `cubic-bezier(0.2, 0.8, 0.2, 1)`,
+uniquement `transform` et `opacity` (plus `stroke-dashoffset` pour les tracés
+SVG). Tout est désactivé avec `prefers-reduced-motion` (contenu visible
+immédiatement). Pas de parallaxe, pas d'animation en boucle.
+
+Un script inline dans `<head>` pose la classe `html.anim` avant le premier
+rendu : les états « masqués » des animations sont tous conditionnés à cette
+classe, donc **sans JavaScript le contenu reste visible** (pas de flash non plus).
+
+1. **Hero** : le N se dessine trait par trait (`stroke-dashoffset`, ~1 s), puis
+   ses nœuds s'allument, puis le fil apparaît.
+2. **Sections** : apparition en fondu + glissement de 12 px vers le haut à
+   l'entrée en vue (une seule fois). Le tracé du fil est recalculé après pour
+   que les nœuds restent alignés.
+3. **Nœuds** : une onde turquoise (cercle qui s'agrandit et disparaît, ~600 ms)
+   part du nœud une seule fois quand il passe à l'état atteint.
+4. **Tracés** : branches de Réalisations et de Localisations, et schéma
+   Dakar–Casablanca–Paris, se dessinent à l'entrée en vue de la section.
+5. **Boutons** : au survol et au focus, la flèche avance de 4 px et une fine
+   ligne se dessine sous le texte.
+
+> Note : le sélecteur de langue (EN) est retiré de l'en-tête tant que la version
+> anglaise n'est pas complète ; les pages `/en/` existent toujours. Les 4
+> étiquettes du hero (Boutique en ligne, Banque, Pointeuses, Applications métier)
+> sont enfilées le long du fil dans la colonne de droite, à la sortie du N.

@@ -95,18 +95,19 @@ const t = content[lang].about;
     dominant-baseline: middle;
   }
 
-  /* Tracé animé : lignes masquées puis dessinées quand la section est vue */
-  .geo-link {
+  /* Tracé animé : lignes masquées puis dessinées quand la section est vue.
+     Masquage gated par .anim (JS actif) → sans JS, les traits sont visibles. */
+  html.anim .geo-link {
     stroke-dasharray: var(--len, 200);
     stroke-dashoffset: var(--len, 200);
   }
 
-  .geo.in-view .geo-link {
+  html.anim .geo.in-view .geo-link {
     transition: stroke-dashoffset 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
     stroke-dashoffset: 0;
   }
 
-  .geo.in-view .geo-link:nth-of-type(2) {
+  html.anim .geo.in-view .geo-link:nth-of-type(2) {
     transition-delay: 0.25s;
   }
 
@@ -123,7 +124,7 @@ const t = content[lang].about;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .geo-link {
+    html.anim .geo-link {
       stroke-dashoffset: 0;
     }
   }

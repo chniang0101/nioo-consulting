@@ -75,7 +75,7 @@ const t = content[lang].realisations;
     width: 0.9rem;
     height: 2px;
     background: var(--turquoise);
-    transform: translateY(-50%) scaleX(0);
+    transform: translateY(-50%);
     transform-origin: right center;
   }
 
@@ -83,19 +83,19 @@ const t = content[lang].realisations;
     background: var(--turquoise);
   }
 
-  .mission.is-visible .branch-node::before {
+  /* Dessin de la branche (JS actif) ; sans JS elle est visible d'emblée */
+  html.anim .branch-node::before {
+    transform: translateY(-50%) scaleX(0);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  html.anim .mission.is-visible .branch-node::before {
     transform: translateY(-50%) scaleX(1);
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .branch-node::before {
-      transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .branch-node::before {
-      transform: translateY(-50%) scaleX(1);
+    html.anim .branch-node::before {
+      transition: none;
     }
   }
 

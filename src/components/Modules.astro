@@ -174,7 +174,7 @@ const icons: Record<string, string> = {
     width: 2px;
     height: 8px;
     background: var(--turquoise);
-    transform: translateX(-50%) scaleY(0);
+    transform: translateX(-50%);
     transform-origin: top center;
   }
 
@@ -182,19 +182,19 @@ const icons: Record<string, string> = {
     background: var(--turquoise);
   }
 
-  .loc.is-visible .branch-node::before {
+  /* Dessin de la branche (JS actif) ; sans JS elle est visible d'emblée */
+  html.anim .loc .branch-node::before {
+    transform: translateX(-50%) scaleY(0);
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  html.anim .loc.is-visible .branch-node::before {
     transform: translateX(-50%) scaleY(1);
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .loc .branch-node::before {
-      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .loc .branch-node::before {
-      transform: translateX(-50%) scaleY(1);
+    html.anim .loc .branch-node::before {
+      transition: none;
     }
   }
 
