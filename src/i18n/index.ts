@@ -54,6 +54,14 @@ interface Content {
     extraTitle: string;
     extra: { title: string; body: string }[];
   };
+  modules: {
+    heading: string;
+    modulesSubtitle: string;
+    items: { key: string; name: string }[];
+    locSubtitle: string;
+    locs: { title: string; body: string }[];
+    multiNote: string;
+  };
   realisations: {
     heading: string;
     intro: string;
@@ -111,6 +119,7 @@ export const content: Record<Lang, Content> = {
       cta: 'Me contacter',
       items: [
         { href: navHrefs[0], label: 'Services' },
+        { href: '#modules', label: 'Modules' },
         { href: navHrefs[1], label: 'Réalisations' },
         { href: navHrefs[2], label: 'Méthode' },
         { href: navHrefs[3], label: 'À propos' },
@@ -164,6 +173,39 @@ export const content: Record<Lang, Content> = {
           body: "Prise en main d'Odoo et formation Excel pour vos équipes, du niveau débutant à expert.",
         },
       ],
+    },
+    modules: {
+      heading: 'Modules et localisations',
+      modulesSubtitle: 'Les modules Odoo que je mets en place au quotidien',
+      items: [
+        { key: 'ventes', name: 'Ventes' },
+        { key: 'achats', name: 'Achats' },
+        { key: 'inventaire', name: 'Inventaire' },
+        { key: 'comptabilite', name: 'Comptabilité' },
+        { key: 'pos', name: 'Point de vente' },
+        { key: 'fabrication', name: 'Fabrication' },
+        { key: 'rh', name: 'RH et présences' },
+        { key: 'web', name: 'Site web et e-commerce' },
+        { key: 'flotte', name: 'Flotte' },
+        { key: 'evenements', name: 'Événements' },
+      ],
+      locSubtitle: 'Une comptabilité conforme, quel que soit le pays',
+      locs: [
+        {
+          title: 'France',
+          body: 'Plan comptable général, TVA, export FEC, préparation à la facturation électronique obligatoire.',
+        },
+        {
+          title: 'Maroc',
+          body: 'Plan comptable marocain, TVA, factures et déclarations conformes.',
+        },
+        {
+          title: 'Zone OHADA',
+          body: "Plan comptable SYSCOHADA, pour le Sénégal et l'Afrique de l'Ouest.",
+        },
+      ],
+      multiNote:
+        'Une même entreprise, plusieurs pays : je configure Odoo en multi-sociétés et multi-devises (EUR, MAD, XOF).',
     },
     realisations: {
       heading: 'Quelques missions récentes',
@@ -282,6 +324,7 @@ export const content: Record<Lang, Content> = {
       cta: 'Get in touch',
       items: [
         { href: navHrefs[0], label: 'Services' },
+        { href: '#modules', label: 'Modules' },
         { href: navHrefs[1], label: 'Case studies' },
         { href: navHrefs[2], label: 'Method' },
         { href: navHrefs[3], label: 'About' },
@@ -335,6 +378,39 @@ export const content: Record<Lang, Content> = {
           body: 'Getting started with Odoo and Excel training for your teams, from beginner to expert.',
         },
       ],
+    },
+    modules: {
+      heading: 'Modules and localisations',
+      modulesSubtitle: 'The Odoo modules I set up day to day',
+      items: [
+        { key: 'ventes', name: 'Sales' },
+        { key: 'achats', name: 'Purchases' },
+        { key: 'inventaire', name: 'Inventory' },
+        { key: 'comptabilite', name: 'Accounting' },
+        { key: 'pos', name: 'Point of Sale' },
+        { key: 'fabrication', name: 'Manufacturing' },
+        { key: 'rh', name: 'HR & attendance' },
+        { key: 'web', name: 'Website & e-commerce' },
+        { key: 'flotte', name: 'Fleet' },
+        { key: 'evenements', name: 'Events' },
+      ],
+      locSubtitle: 'Compliant accounting, whatever the country',
+      locs: [
+        {
+          title: 'France',
+          body: 'General chart of accounts, VAT, FEC export, readiness for mandatory e-invoicing.',
+        },
+        {
+          title: 'Morocco',
+          body: 'Moroccan chart of accounts, VAT, compliant invoices and declarations.',
+        },
+        {
+          title: 'OHADA zone',
+          body: 'SYSCOHADA chart of accounts, for Senegal and West Africa.',
+        },
+      ],
+      multiNote:
+        'One company, several countries: I configure Odoo in multi-company and multi-currency (EUR, MAD, XOF).',
     },
     realisations: {
       heading: 'Recent projects',

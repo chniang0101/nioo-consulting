@@ -1,0 +1,245 @@
+---
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'fr' } = Astro.props;
+const t = content[lang].modules;
+
+// Icônes Lucide (MIT), intégrées en SVG inline — aucun chargement externe,
+// aucune icône ni logo officiels d'Odoo. Trait fin 1.5.
+const icons: Record<string, string> = {
+  ventes:
+    '<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  achats:
+    '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+  inventaire:
+    '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+  comptabilite:
+    '<rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/>',
+  pos:
+    '<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/>',
+  fabrication:
+    '<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>',
+  rh:
+    '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  web:
+    '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  flotte:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  evenements:
+    '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>',
+};
+---
+
+<section id="modules">
+  <div class="container flow">
+    <div class="section-head">
+      <span class="node" data-node aria-hidden="true"></span>
+      <h2>{t.heading}</h2>
+    </div>
+
+    <!-- Partie A — Modules -->
+    <h3 class="sub">{t.modulesSubtitle}</h3>
+    <ul class="modules-grid">
+      {
+        t.items.map((m) => (
+          <li class="module">
+            <span class="mod-icon" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                set:html={icons[m.key]}
+              />
+            </span>
+            <span class="mod-name">{m.name}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- Partie B — Localisations -->
+    <h3 class="sub loc-sub">{t.locSubtitle}</h3>
+    <div class="locs">
+      {
+        t.locs.map((l) => (
+          <div class="loc">
+            <span class="branch-node" aria-hidden="true" />
+            <h4>{l.title}</h4>
+            <p>{l.body}</p>
+          </div>
+        ))
+      }
+    </div>
+    <p class="loc-note">{t.multiNote}</p>
+  </div>
+</section>
+
+<style>
+  .sub {
+    color: var(--plum);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 1.4rem;
+  }
+
+  .loc-sub {
+    margin-top: clamp(32px, 4vw, 48px);
+  }
+
+  /* Partie A — grille compacte 5 colonnes (2 sur mobile) */
+  .modules-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.25rem 1rem;
+  }
+
+  .module {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.6rem;
+    padding: 1rem 0.5rem;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+  }
+
+  .mod-icon {
+    color: var(--plum);
+    line-height: 0;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .mod-icon svg {
+    width: 30px;
+    height: 30px;
+    display: block;
+  }
+
+  .mod-name {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .module:hover {
+    background: #f3ecf2;
+  }
+
+  .module:hover .mod-icon {
+    color: var(--turquoise);
+  }
+
+  /* Partie B — trois blocs reliés au fil par une branche à nœud */
+  .locs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(16px, 2.5vw, 28px);
+  }
+
+  .loc {
+    position: relative;
+    padding: 1.1rem 1.1rem 1.1rem 1.4rem;
+    background: #f3ecf2;
+    border-radius: 12px;
+  }
+
+  .loc .branch-node {
+    position: absolute;
+    left: 1.4rem;
+    top: -6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--off-white);
+    border: 3px solid var(--turquoise);
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Petite branche verticale reliant le nœud au bloc */
+  .loc .branch-node::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 2px;
+    height: 8px;
+    background: var(--turquoise);
+    transform: translateX(-50%);
+  }
+
+  .loc.is-visible .branch-node {
+    background: var(--turquoise);
+  }
+
+  .loc h4 {
+    margin: 0.4rem 0 0.4rem;
+    color: var(--plum);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .loc p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .loc-note {
+    margin: 1.4rem 0 0;
+    color: var(--text);
+    font-size: 0.98rem;
+    max-width: 70ch;
+  }
+
+  @media (max-width: 860px) {
+    .modules-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .locs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .module,
+    .mod-icon,
+    .loc .branch-node {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Allumage des nœuds de localisation quand ils entrent dans la vue.
+  const locs = document.querySelectorAll('#modules .loc');
+  if (
+    locs.length &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    locs.forEach((l) => io.observe(l));
+  } else {
+    locs.forEach((l) => l.classList.add('is-visible'));
+  }
+</script>
