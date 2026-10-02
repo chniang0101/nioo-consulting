@@ -15,12 +15,38 @@ const t = content[lang].hero;
          pour que l'ordre des nœuds du fil commence bien par le N. -->
     <div class="hero-side">
       <figure class="hero-mark">
-        <img
-          src="/brand/nioo-icon-plum-transparent.svg"
-          alt={t.markAlt}
+        <svg
+          class="n-mark"
+          viewBox="0 0 100 100"
+          role="img"
+          aria-label={t.markAlt}
           width="220"
           height="220"
-        />
+        >
+          <g fill="none" stroke="#4A2E48" stroke-width="11" stroke-linecap="round">
+            <line class="n-line" x1="30" y1="22" x2="30" y2="78"></line>
+            <line class="n-line" x1="70" y1="22" x2="70" y2="78"></line>
+            <line class="n-line" x1="30" y1="22" x2="70" y2="78"></line>
+          </g>
+          <circle class="n-node" cx="30" cy="22" r="9" fill="#4A2E48"></circle>
+          <circle class="n-node" cx="70" cy="78" r="9" fill="#4A2E48"></circle>
+          <circle
+            class="n-node"
+            cx="30"
+            cy="78"
+            r="5.5"
+            fill="#FAF7FA"
+            stroke="#4A2E48"
+            stroke-width="3.5"></circle>
+          <circle
+            class="n-node"
+            cx="70"
+            cy="22"
+            r="5.5"
+            fill="#FAF7FA"
+            stroke="#4A2E48"
+            stroke-width="3.5"></circle>
+        </svg>
         <span class="node hero-start" data-node="free" aria-hidden="true"></span>
       </figure>
 
@@ -81,10 +107,48 @@ const t = content[lang].hero;
     margin: 0 0 0.5rem;
   }
 
-  .hero-mark img {
+  .hero-mark .n-mark {
     height: clamp(150px, 19vw, 210px);
     width: auto;
     display: block;
+    overflow: visible;
+  }
+
+  /* Animation d'arrivée : le N se dessine trait par trait, puis ses nœuds
+     s'allument. Statique si prefers-reduced-motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html.anim .n-line {
+      stroke-dasharray: 72;
+      stroke-dashoffset: 72;
+      animation: n-draw 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    html.anim .n-line:nth-child(2) {
+      animation-delay: 0.12s;
+    }
+    html.anim .n-line:nth-child(3) {
+      animation-delay: 0.24s;
+    }
+    html.anim .n-node {
+      opacity: 0;
+      transform: scale(0.4);
+      transform-origin: center;
+      transform-box: fill-box;
+      animation: n-pop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      animation-delay: 1s;
+    }
+  }
+
+  @keyframes n-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes n-pop {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   /* Nœud de départ du fil : extrémité bas-droite du N (70% / 78%) */
@@ -156,7 +220,7 @@ const t = content[lang].hero;
       padding-left: 0;
     }
 
-    .hero-mark img {
+    .hero-mark .n-mark {
       height: 120px;
     }
 

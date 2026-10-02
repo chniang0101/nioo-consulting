@@ -155,9 +155,13 @@
       const drawn = frac * totalLength;
       path.style.strokeDashoffset = String(totalLength - drawn);
 
-      // Allumage des nœuds atteints
+      // Allumage des nœuds atteints + onde émise une seule fois
       nodes.forEach((n, i) => {
-        n.classList.toggle('is-reached', nodeLengths[i] <= drawn + 6);
+        const reached = nodeLengths[i] <= drawn + 6;
+        n.classList.toggle('is-reached', reached);
+        if (reached && !n.classList.contains('did-ripple')) {
+          n.classList.add('did-ripple');
+        }
       });
     };
 
@@ -184,5 +188,29 @@
       (document as any).fonts.ready.then(measure);
     }
     window.addEventListener('load', measure);
+
+    // Apparition des sections (fondu + glissement). Une fois la section en
+    // place, on recalcule le tracé pour que les nœuds restent sur le fil.
+    if (!reduceMotion) {
+      const revealTargets = wrap.querySelectorAll<HTMLElement>(
+        ':scope > section:not(.hero) > .container'
+      );
+      const ro = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              const el = e.target as HTMLElement;
+              el.classList.add('is-revealed');
+              el.addEventListener('transitionend', () => measure(), {
+                once: true,
+              });
+              ro.unobserve(el);
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+      revealTargets.forEach((el) => ro.observe(el));
+    }
   }
 </script>

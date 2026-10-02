@@ -37,6 +37,11 @@ const alternates = (['fr', 'en'] as Lang[]).map((l) => ({
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Active les animations avant le premier rendu (évite tout flash).
+         Sans JS, la classe n'est pas posée : le contenu reste visible. -->
+    <script is:inline>
+      document.documentElement.classList.add('anim');
+    </script>
     <title>{resolvedTitle}</title>
     <meta name="description" content={resolvedDescription} />
     <link rel="canonical" href={canonical} />

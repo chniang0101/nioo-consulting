@@ -174,11 +174,28 @@ const icons: Record<string, string> = {
     width: 2px;
     height: 8px;
     background: var(--turquoise);
-    transform: translateX(-50%);
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: top center;
   }
 
   .loc.is-visible .branch-node {
     background: var(--turquoise);
+  }
+
+  .loc.is-visible .branch-node::before {
+    transform: translateX(-50%) scaleY(1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .loc .branch-node::before {
+      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loc .branch-node::before {
+      transform: translateX(-50%) scaleY(1);
+    }
   }
 
   .loc h4 {
