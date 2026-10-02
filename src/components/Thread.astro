@@ -23,7 +23,7 @@
     ).matches;
 
     let nodes: HTMLElement[] = [];
-    let points: Pt[] = [];
+    let points: Pt[] = []; // centre de chaque nœud (pour l'allumage)
     let nodeLengths: number[] = []; // longueur du tracé jusqu'à chaque nœud
     let totalLength = 0;
     let ticking = false;
@@ -67,7 +67,27 @@
       points = nodes.map((n) => centerOf(n, origin));
 
       const smooth = window.innerWidth >= 900;
-      path.setAttribute('d', buildPath(points, smooth));
+
+      // Les nœuds « libres » (hero : le N et ses étiquettes) peuvent être
+      // hors gouttière. Les autres sont alignés dans la gouttière à gauche.
+      // Pour qu'un passage libre→gouttière ne traverse jamais de texte, on
+      // insère un point de passage dans la gouttière à la hauteur du nœud
+      // libre : la portion horizontale se fait dans une bande vide, puis le
+      // fil descend droit dans la gouttière.
+      const isGutter = nodes.map((n) => n.dataset.node !== 'free');
+      const firstGutter = isGutter.findIndex((g) => g);
+      const gutterX = firstGutter >= 0 ? points[firstGutter].x : points[0].x;
+
+      const pathPoints: Pt[] = [];
+      for (let i = 0; i < points.length; i++) {
+        pathPoints.push(points[i]);
+        if (i < points.length - 1 && isGutter[i] !== isGutter[i + 1]) {
+          const freeY = isGutter[i] ? points[i + 1].y : points[i].y;
+          pathPoints.push({ x: gutterX, y: freeY });
+        }
+      }
+
+      path.setAttribute('d', buildPath(pathPoints, smooth));
 
       // Dimensions du SVG en pixels (1 unité = 1 px, pas de déformation)
       const w = wrap.offsetWidth;
@@ -126,6 +146,11 @@
       const wrapH = wrap.offsetHeight;
       let frac = headY / wrapH;
       frac = Math.max(0, Math.min(1, frac));
+
+      // Quand on arrive en bas de page, la tête ne peut plus avancer : on
+      // force le dessin complet pour que le dernier nœud (Contact) s'allume.
+      const docH = document.documentElement.scrollHeight;
+      if (window.scrollY + window.innerHeight >= docH - 2) frac = 1;
 
       const drawn = frac * totalLength;
       path.style.strokeDashoffset = String(totalLength - drawn);
